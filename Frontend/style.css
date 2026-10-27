@@ -1,0 +1,87 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background: #f4f7f6;
+    color: #333
+}
+header{
+    background: #218838;
+    color: white;
+    padding: 25px 10px;
+    text-align: center;
+}
+header h1{
+    margin-bottom: 10px;
+}
+.container{
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+}
+h2{
+    margin-bottom: 20px;
+    margin-top: 15px;
+}
+from{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+input{
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+}
+button{
+    padding: 12px;
+    background: #218838;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+button:hover{
+    background: #176b2c;
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th,td{
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+th{
+    background: #218838;
+    color: white;
+}
+.status-fresh{
+    color: green;
+    font-weight: bold;
+}
+.status-expiring{
+    color: red;
+    font-weight: bold;
+}
+.delete-btn{
+    background: #dc3545;
+    padding: 8px 12px;
+}
+#message{
+    margin-top: 15px;
+    font-weight: bold;
+}
+.table-container{
+    overflow-x: auto;
+} 
