@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshTrack | Products</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green: #16803d;
+            --dark-green: #14532d;
+            --light-green: #dcfce7;
+            --background: #f8faf8;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 7%;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 27px;
+            font-weight: 800;
+            color: var(--dark-green);
+        }
+
+        .brand span {
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--green);
+        }
+
+        .nav-button {
+            background: var(--green);
+            color: white !important;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 55px 7% 35px;
+            background: linear-gradient(120deg, #f0fdf4, white);
+        }
+
+        .page-header .tag {
+            display: inline-block;
+            background: var(--light-green);
+            color: var(--dark-green);
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .page-header h1 {
+            color: var(--dark-green);
+            font-size: clamp(30px, 4vw, 42px);
+            margin-bottom: 10px;
+        }
+
+        .page-header h1 span {
+            color: var(--green);
+        }
+
+        .page-header p {
+            color: var(--muted);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 35px 25px 65px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            display: flex;
+            flex: 1;
+            max-width: 550px;
+            gap: 10px;
+        }
+
+        .search-box input {
+            width: 100%;
+            min-width: 0;
+            padding: 13px 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px var(--light-green);
+        }
+
+        button,
+        select {
+            font-family: inherit;
+        }
+
+        .filter-select {
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+        }
+
+        .cart-button {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 12px 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .cart-button:hover {
+            background: var(--dark-green);
+        }
+
+        .result-count {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 23px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 22px;
+            transition: 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(20, 83, 45, 0.09);
+        }
+
+        .product-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 110px;
+            border-radius: 12px;
+            background: #f0fdf4;
+            font-size: 55px;
+            margin-bottom: 17px;
+        }
+
+        .product-card h2 {
+            font-size: 19px;
+            color: var(--dark-green);
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 21px;
+            font-weight: 800;
+            color: var(--green);
+            margin-bottom: 7px;
+        }
+
+        .product-expiry {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .fresh {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .soon {
+            color: #9a3412;
+            background: #ffedd5;
+        }
+
+        .expired {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .add-button {
+            width: 100%;
+            display: block;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            background: var(--green);
+            color: white;
+        }
+
+        .add-button:hover {
+            background: var(--dark-green);
+        }
+
+        .add-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 15px;
+            color: var(--muted);
+            background: white;
+            border-radius: 12px;
+        }
+
+        .cart-panel {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 28px;
+        }
+
+        .cart-panel h2 {
+            color: var(--dark-green);
+            margin-bottom: 12px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cart-item button {
+            border: none;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--dark-green);
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #123d27;
+            color: #d1fae5;
+            font-size: 13px;
+        }
+
+        @media (max-width: 850px) {
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                flex-wrap: wrap;
+                padding: 15px 5%;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .container {
+                padding: 25px 5% 45px;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar,
+            .search-box {
+                width: 100%;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .filter-select {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand">Fresh<span>Track</span></a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="products.html" class="active">Products</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="login.html" class="nav-button">Login / Register</a>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <span class="tag">FRESHNESS AT YOUR FINGERTIPS</span>
+        <h1>Explore Our <span>Products</span></h1>
+        <p>Discover available food products and check their expiry dates.</p>
+    </header>
+
+    <main class="container">
+
+        <div class="toolbar">
+            <form class="search-box" id="searchForm">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search fruits, vegetables, products..."
+                    aria-label="Search products">
+                <button type="submit" class="cart-button">Search</button>
+            </form>
+
+            <select id="statusFilter"
+                    class="filter-select"
+                    aria-label="Filter products by status">
+                <option value="all">All Products</option>
+                <option value="fresh">Fresh</option>
+                <option value="soon">Expiring Soon</option>
+                <option value="expired">Expired</option>
+            </select>
+
+            <button type="button" id="toggleCart" class="cart-button">
+                🛒 Cart (<span id="cartCount">0</span>)
+            </button>
+        </div>
+
+        <section id="cartPanel" class="cart-panel" hidden>
+            <h2>Your Shopping Cart</h2>
+            <div id="cartItems"></div>
+            <p class="cart-total">
+                Total: ₹<span id="cartTotal">0.00</span>
+            </p>
+            <p style="color:#6b7280;font-size:13px;margin-top:8px">
+                Demo cart only. Orders are not submitted to a server yet.
+            </p>
+        </section>
+
+        <p class="result-count" id="resultCount">Loading products...</p>
+
+        <section class="product-grid" id="productGrid"
+                 aria-live="polite"></section>
+
+    </main>
+
+    <footer>
+        &copy; <span id="year"></span> FreshTrack.
+        Fresh Food. Less Waste. Better Living.
+    </footer>
+
+    <script>
+        const API_URL = "http://localhost:8080/api/products";
+
+        const productGrid = document.getElementById("productGrid");
+        const searchForm = document.getElementById("searchForm");
+        const searchInput = document.getElementById("searchInput");
+        const statusFilter = document.getElementById("statusFilter");
+        const resultCount = document.getElementById("resultCount");
+
+        const cartPanel = document.getElementById("cartPanel");
+        const cartItemsElement = document.getElementById("cartItems");
+        const cartCountElement = document.getElementById("cartCount");
+        const cartTotalElement = document.getElementById("cartTotal");
+
+        let allProducts = [];
+        let cart = [];
+
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        function getName(product) {
+            return String(
+                product.foodName ??
+                product.name ??
+                product.productName ??
+                "Food product"
+            );
+        }
+
+        function getExpiry(product) {
+            return String(
+                product.expiryDate ??
+                product.expirationDate ??
+                ""
+            );
+        }
+
+        function getPrice(product) {
+            const price = Number(product.price ?? 0);
+            return Number.isFinite(price) && price >= 0 ? price : 0;
+        }
+
+        function getId(product) {
+            return String(product.id ?? product.productId ?? getName(product));
+        }
+
+        function getEmoji(name) {
+            const n = name.toLowerCase();
+
+            if (n.includes("apple")) return "🍎";
+            if (n.includes("banana")) return "🍌";
+            if (n.includes("orange")) return "🍊";
+            if (n.includes("mango")) return "🥭";
+            if (n.includes("grape")) return "🍇";
+            if (n.includes("watermelon")) return "🍉";
+            if (n.includes("milk")) return "🥛";
+            if (n.includes("bread")) return "🍞";
+            if (n.includes("tomato")) return "🍅";
+            if (n.includes("potato")) return "🥔";
+            if (n.includes("carrot")) return "🥕";
+            if (n.includes("onion")) return "🧅";
+            if (n.includes("egg")) return "🥚";
+            if (n.includes("rice")) return "🍚";
+            if (n.includes("chicken")) return "🍗";
+
+            return "🥬";
+        }
+
+        function getStatus(expiry) {
+            if (!expiry) {
+                return {
+                    key: "unknown",
+                    label: "Expiry unavailable",
+                    className: "soon"
+                };
+            }
+
+            // Compare calendar dates without time-zone differences.
+            const expiryDate = new Date(expiry + "T00:00:00");
+            if (Number.isNaN(expiryDate.getTime())) {
+                return {
+                    key: "unknown",
+                    label: "Check expiry date",
+                    className: "soon"
+                };
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const days = Math.round(
+                (expiryDate.getTime() - today.getTime()) / 86400000
+            );
+
+            if (days < 0) {
+                return {
+                    key: "expired",
+                    label: "Expired",
+                    className: "expired"
+                };
+            }
+
+            if (days <= 2) {
+                return {
+                    key: "soon",
+                    label: "Expiring Soon",
+                    className: "soon"
+                };
+            }
+
+            return {
+                key: "fresh",
+                label: "Fresh",
+                className: "fresh"
+            };
+        }
+
+        function renderProducts() {
+            const query = searchInput.value.trim().toLowerCase();
+            const filter = statusFilter.value;
+
+            const filteredProducts = allProducts.filter(product => {
+                const matchesName = getName(product)
+                    .toLowerCase()
+                    .includes(query);
+
+                const status = getStatus(getExpiry(product));
+                const matchesStatus =
+                    filter === "all" || status.key === filter;
+
+                return matchesName && matchesStatus;
+            });
+
+            productGrid.replaceChildren();
+
+            resultCount.textContent =
+                filteredProducts.length + " product(s) found";
+
+            if (filteredProducts.length === 0) {
+                const message = document.createElement("p");
+                message.className = "empty-message";
+                message.textContent = allProducts.length === 0
+                    ? "No products are available yet. Please check back later."
+                    : "No matching products found. Try another search.";
+                productGrid.appendChild(message);
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const name = getName(product);
+                const expiry = getExpiry(product);
+                const price = getPrice(product);
+                const status = getStatus(expiry);
+                const id = getId(product);
+
+                const card = document.createElement("article");
+                card.className = "product-card";
+
+                const icon = document.createElement("div");
+                icon.className = "product-icon";
+                icon.textContent = getEmoji(name);
+
+                const title = document.createElement("h2");
+                title.textContent = name;
+
+                const priceElement = document.createElement("p");
+                priceElement.className = "product-price";
+                priceElement.textContent = "₹" + price.toFixed(2);
+
+                const expiryElement = document.createElement("p");
+                expiryElement.className = "product-expiry";
+                expiryElement.textContent = expiry
+                    ? "Expiry date: " + expiry
+                    : "Expiry date unavailable";
+
+                const badge = document.createElement("span");
+                badge.className = "status " + status.className;
+                badge.textContent = status.label;
+
+                const addButton = document.createElement("button");
+                addButton.className = "add-button";
+                addButton.type = "button";
+
+                // Never allow expired items into the cart.
+                const cannotBuy =
+                    status.key === "expired" ||
+                    status.key === "unknown";
+
+                addButton.disabled = cannotBuy;
+                addButton.textContent = cannotBuy
+                    ? (status.key === "expired"
+                        ? "Expired Product"
+                        : "Expiry Must Be Verified")
+                    : "🛒 Add to Cart";
+
+                addButton.addEventListener("click", () => {
+                    addToCart(id, name, price, expiry, status.key);
+                });
+
+                card.append(
+                    icon,
+                    title,
+                    priceElement,
+                    expiryElement,
+                    badge,
+                    addButton
+                );
+
+                productGrid.appendChild(card);
+            });
+        }
+
+        function addToCart(id, name, price, expiry, status) {
+            if (status === "expired" || status === "unknown") {
+                alert("This product cannot be added to the cart.");
+                return;
+            }
+
+            const existing = cart.find(item => item.id === id);
+
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({
+                    id,
+                    name,
+                    price,
+                    expiry,
+                    quantity: 1
+                });
+            }
+
+            renderCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
+        }
+
+        function renderCart() {
+            cartItemsElement.replaceChildren();
+
+            let total = 0;
+            let count = 0;
+
+            if (cart.length === 0) {
+                const message = document.createElement("p");
+                message.textContent = "Your cart is empty.";
+                cartItemsElement.appendChild(message);
+            }
+
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                count += item.quantity;
+
+                const row = document.createElement("div");
+                row.className = "cart-item";
+
+                const details = document.createElement("span");
+                details.textContent =
+                    item.name + " × " + item.quantity +
+                    " — ₹" + (item.price * item.quantity).toFixed(2);
+
+                const removeButton = document.createElement("button");
+                removeButton.type = "button";
+                removeButton.textContent = "Remove";
+                removeButton.addEventListener("click", () => {
+                    removeFromCart(item.id);
+                });
+
+                row.append(details, removeButton);
+                cartItemsElement.appendChild(row);
+            });
+
+            cartCountElement.textContent = count;
+            cartTotalElement.textContent = total.toFixed(2);
+        }
+
+        searchForm.addEventListener("submit", event => {
+            event.preventDefault();
+            renderProducts();
+        });
+
+        searchInput.addEventListener("input", renderProducts);
+        statusFilter.addEventListener("change", renderProducts);
+
+        document.getElementById("toggleCart").addEventListener("click", () => {
+            cartPanel.hidden = !cartPanel.hidden;
+
+            if (!cartPanel.hidden) {
+                cartPanel.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+        });
+
+        async function loadProducts() {
+            productGrid.replaceChildren();
+
+            const loading = document.createElement("p");
+            loading.className = "empty-message";
+            loading.textContent = "Loading products...";
+            productGrid.appendChild(loading);
+
+            try {
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error("Server returned " + response.status);
+                }
+
+                const data = await response.json();
+
+                if (!Array.isArray(data)) {
+                    throw new Error("Unexpected response format");
+                }
+
+                allProducts = data;
+                renderProducts();
+
+            } catch (error) {
+                console.error("Could not load products:", error);
+
+                productGrid.replaceChildren();
+
+                const message = document.createElement("p");
+                message.className = "empty-message";
+                message.textContent =
+                    "Products could not be loaded. Start your Spring Boot backend and refresh this page.";
+
+                productGrid.appendChild(message);
+                resultCount.textContent = "Unable to load products";
+            }
+        }
+
+        loadProducts();
+    </script>
+
+</body>
+</html>

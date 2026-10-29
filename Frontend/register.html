@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | FreshTrack</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 18px #00000015;
+        }
+
+        .auth-container h1 {
+            text-align: center;
+            color: #218838;
+        }
+
+        .auth-container p {
+            text-align: center;
+            color: #666;
+        }
+
+        .auth-container input,
+        .auth-container select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 16px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            box-sizing: border-box;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 13px;
+            background: #218838;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .auth-container button:hover {
+            background: #17692b;
+        }
+
+        .auth-container a {
+            color: #218838;
+        }
+
+        #message {
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="how-it-works.html">How It Works</a>
+        <a href="login.html">Login</a>
+    </nav>
+
+    <div class="auth-container">
+        <h1>Create Account 🌿</h1>
+        <p>Join FreshTrack today!</p>
+
+        <form id="registerForm">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password"
+                   placeholder="Create a password" minlength="6" required>
+
+            <label for="role">Register As</label>
+            <select id="role" required>
+                <option value="">Select your role</option>
+                <option value="customer">Customer</option>
+                <option value="seller">Seller</option>
+            </select>
+
+            <button type="submit">Create Account</button>
+            <p id="message"></p>
+        </form>
+
+        <p>Already have an account?
+            <a href="login.html">Login here</a>
+        </p>
+    </div>
+
+    <script>
+        
+document.getElementById("registerForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const message = document.getElementById("message");
+
+    const userData = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+        role: document.getElementById("role").value
+    };
+
+    message.textContent = "Registering...";
+
+    try {
+        const response = await fetch("http://localhost:8080/api/users/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            message.style.color = "green";
+            message.textContent = "Registration successful! Redirecting to login...";
+
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 1500);
+        } else {
+            message.style.color = "red";
+            message.textContent = result.message || "Registration failed.";
+        }
+    } catch (error) {
+        message.style.color = "red";
+        message.textContent = "Backend connection failed. Please start your Spring Boot server.";
+    }
+});
+    </script>
+
+</body>
+</html>

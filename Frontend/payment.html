@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshTrack - Payment Method</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f7f3;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .payment-container {
+            max-width: 420px;
+            margin: 40px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #238636;
+        }
+
+        .amount {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 7px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .pay-button {
+            background: #238636;
+        }
+
+        .fail-button {
+            background: #d93025;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .note {
+            color: #666;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="payment-container">
+    <h1>FreshTrack</h1>
+    <h2>Payment Method</h2>
+
+    <p>Order Amount</p>
+    <div class="amount" id="amount">₹100.00</div>
+
+    <button class="pay-button" onclick="processPayment(true)">
+        Pay Now (Demo)
+    </button>
+
+    <button class="fail-button" onclick="processPayment(false)">
+        Simulate Payment Failure
+    </button>
+
+    <div id="result" role="status" aria-live="polite"></div>
+
+    <p class="note">
+        Demo only — no real money will be charged.
+    </p>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const requestedAmount = Number(params.get("amount"));
+
+    if (params.has("amount") &&
+        Number.isFinite(requestedAmount) &&
+        requestedAmount > 0) {
+        document.getElementById("amount").textContent =
+            "₹" + requestedAmount.toFixed(2);
+    }
+
+    function processPayment(success) {
+        const result = document.getElementById("result");
+
+        if (success) {
+            result.style.color = "green";
+            result.textContent =
+                "Payment Successful! No real payment was made.";
+        } else {
+            result.style.color = "red";
+            result.textContent = "Payment Failed. Please try again.";
+        }
+    }
+</script>
+
+</body>
+</html>

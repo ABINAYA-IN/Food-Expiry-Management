@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>How It Works | FreshTrack</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green: #16803d;
+            --dark-green: #14532d;
+            --light-green: #dcfce7;
+            --background: #f8faf8;
+            --text: #1f2937;
+            --muted: #6b7280;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 18px 7%;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 27px;
+            font-weight: 800;
+            color: var(--dark-green);
+        }
+
+        .brand span {
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 22px;
+        }
+
+        .nav-links a {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--green);
+        }
+
+        .nav-button {
+            background: var(--green);
+            color: white !important;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        .hero {
+            padding: 75px 7%;
+            text-align: center;
+            background: linear-gradient(120deg, #dcfce7, #ffffff);
+        }
+
+        .hero-label {
+            display: inline-block;
+            background: white;
+            color: var(--green);
+            border-radius: 20px;
+            padding: 7px 15px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            color: var(--dark-green);
+            font-size: clamp(32px, 5vw, 48px);
+            line-height: 1.2;
+            margin-bottom: 17px;
+        }
+
+        .hero h1 span {
+            color: var(--green);
+        }
+
+        .hero p {
+            max-width: 680px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            padding: 65px 25px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 38px;
+        }
+
+        .section-heading h2 {
+            color: var(--dark-green);
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 23px;
+        }
+
+        .step-card {
+            padding: 28px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            transition: 0.2s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(20, 83, 45, 0.08);
+        }
+
+        .step-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--light-green);
+            border-radius: 15px;
+            font-size: 29px;
+            margin-bottom: 18px;
+        }
+
+        .step-number {
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .step-card h3 {
+            color: var(--dark-green);
+            font-size: 19px;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .status-section {
+            padding: 60px 7%;
+            background: #ecfdf5;
+        }
+
+        .status-grid {
+            max-width: 1050px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 13px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .status-card h3 {
+            margin-bottom: 8px;
+        }
+
+        .status-card p {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .fresh {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .soon {
+            color: #9a3412;
+            background: #ffedd5;
+        }
+
+        .expired {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .roles {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 35px;
+        }
+
+        .role-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .role-card h3 {
+            color: var(--dark-green);
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .role-card p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .role-card ul {
+            padding-left: 20px;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .role-card li {
+            margin-bottom: 8px;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 60px 7%;
+            background: white;
+        }
+
+        .cta h2 {
+            color: var(--dark-green);
+            font-size: 29px;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            color: var(--muted);
+            margin-bottom: 22px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 13px 22px;
+            background: var(--green);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .button:hover {
+            background: var(--dark-green);
+        }
+
+        footer {
+            background: #123d27;
+            color: #d1fae5;
+            text-align: center;
+            padding: 27px 5%;
+            font-size: 13px;
+        }
+
+        @media (max-width: 750px) {
+            .steps-grid,
+            .status-grid,
+            .roles {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 16px 5%;
+            }
+
+            .nav-links {
+                gap: 13px;
+            }
+
+            .hero {
+                padding: 50px 5%;
+            }
+
+            .container {
+                padding: 45px 5%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+
+    <nav class="navbar">
+        <a href="index.html" class="brand">
+            Fresh<span>Track</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="products.html">Products</a>
+            <a href="how-it-works.html" class="active">How It Works</a>
+            <a href="login.html" class="nav-button">Login / Register</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+
+    <header class="hero">
+        <span class="hero-label">SIMPLE • SMART • EFFICIENT</span>
+
+        <h1>How <span>FreshTrack</span> Works</h1>
+
+        <p>
+            FreshTrack helps sellers organize food inventory and
+            expiry information while helping customers discover
+            available products more easily.
+        </p>
+    </header>
+
+    <!-- THREE MAIN STEPS -->
+
+    <main>
+        <section class="container">
+
+            <div class="section-heading">
+                <h2>Three Simple Steps</h2>
+                <p>Understand how FreshTrack supports food management.</p>
+            </div>
+
+            <div class="steps-grid">
+
+                <article class="step-card">
+                    <div class="step-icon">🔐</div>
+                    <p class="step-number">STEP 01</p>
+                    <h3>Create an Account</h3>
+                    <p>
+                        Register as a customer or seller and sign in
+                        to access the appropriate features.
+                    </p>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-icon">📦</div>
+                    <p class="step-number">STEP 02</p>
+                    <h3>Manage Food Products</h3>
+                    <p>
+                        Sellers can organize product names, prices,
+                        quantities, and expiry dates.
+                    </p>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-icon">🛒</div>
+                    <p class="step-number">STEP 03</p>
+                    <h3>Explore Available Products</h3>
+                    <p>
+                        Customers can browse available products and
+                        check their prices and expiry information.
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- EXPIRY STATUS -->
+
+        <section class="status-section">
+
+            <div class="section-heading">
+                <h2>Understand Product Expiry Status</h2>
+                <p>
+                    Product status is calculated from the recorded
+                    expiry date.
+                </p>
+            </div>
+
+            <div class="status-grid">
+
+                <article class="status-card">
+                    <span class="status-badge fresh">FRESH</span>
+                    <h3>🟢 Fresh Products</h3>
+                    <p>
+                        Products with more than two days remaining
+                        before their expiry date.
+                    </p>
+                </article>
+
+                <article class="status-card">
+                    <span class="status-badge soon">EXPIRING SOON</span>
+                    <h3>🟠 Attention Needed</h3>
+                    <p>
+                        Products that expire today or within the
+                        next two days.
+                    </p>
+                </article>
+
+                <article class="status-card">
+                    <span class="status-badge expired">EXPIRED</span>
+                    <h3>🔴 Expired Products</h3>
+                    <p>
+                        Products whose expiry dates have passed.
+                        These should not be offered for purchase.
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- CUSTOMER AND SELLER -->
+
+        <section class="container">
+
+            <div class="section-heading">
+                <h2>Designed for Customers and Sellers</h2>
+                <p>
+                    Each role has its own features and responsibilities.
+                </p>
+            </div>
+
+            <div class="roles">
+
+                <article class="role-card">
+                    <h3>🛍️ For Customers</h3>
+                    <p>
+                        Discover products and review the available
+                        product information.
+                    </p>
+
+                    <ul>
+                        <li>Browse available products.</li>
+                        <li>Search for products by name.</li>
+                        <li>Check prices and expiry dates.</li>
+                        <li>Add eligible products to the cart.</li>
+                    </ul>
+                </article>
+
+                <article class="role-card">
+                    <h3>🏪 For Sellers</h3>
+                    <p>
+                        Keep product information organized and
+                        monitor expiry dates.
+                    </p>
+
+                    <ul>
+                        <li>Add new food products.</li>
+                        <li>Update product prices and details.</li>
+                        <li>Monitor expiry status.</li>
+                        <li>Manage product inventory.</li>
+                    </ul>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- CTA -->
+
+        <section class="cta">
+            <h2>Ready to Explore FreshTrack?</h2>
+
+            <p>
+                Get started and discover a smarter way to manage food.
+            </p>
+
+            <a href="login.html" class="button">
+                Get Started →
+            </a>
+        </section>
+
+    </main>
+
+    <footer>
+        &copy; <span id="year"></span> FreshTrack.
+        Fresh Food. Less Waste. Better Living.
+    </footer>
+
+    <script>
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FreshTrack</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background: #f2f8f2;
+            font-family: Arial, sans-serif;
+        }
+
+        nav {
+            padding: 18px;
+            background: #218838;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: bold;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 55px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #00000015;
+        }
+
+        h1 {
+            text-align: center;
+            color: #218838;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            background: #218838;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #17692b;
+        }
+
+        .bottom-text {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .bottom-text a {
+            color: #218838;
+        }
+
+        #message {
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="how-it-works.html">How It Works</a>
+        <a href="register.html">Register</a>
+    </nav>
+
+    <div class="login-container">
+        <h1>Welcome Back 🌿</h1>
+        <p class="subtitle">Login to your FreshTrack account</p>
+
+        <form id="loginForm">
+
+            <label for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <label for="role">Login As</label>
+            <select id="role" required>
+                <option value="">Select your role</option>
+                <option value="customer">Customer</option>
+                <option value="seller">Seller</option>
+            </select>
+
+            <button type="submit">Login</button>
+
+            <p id="message"></p>
+        </form>
+
+        <div class="bottom-text">
+            Don't have an account?
+            <a href="register.html">Create Account</a>
+        </div>
+    </div>
+
+    <script>
+        
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const message = document.getElementById("message");
+
+    const loginData = {
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+        role: document.getElementById("role").value
+    };
+
+    message.style.color = "#555";
+    message.textContent = "Logging in...";
+
+    try {
+        const response = await fetch("http://localhost:8080/api/users/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(loginData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Store basic display information only.
+            sessionStorage.setItem("userName", result.name);
+            sessionStorage.setItem("userRole", result.role);
+
+            message.style.color = "green";
+            message.textContent = "Login successful!";
+
+            setTimeout(() => {
+                if (result.role.toLowerCase() === "seller") {
+                    window.location.href = "seller.html";
+                } else {
+                    window.location.href = "customer.html";
+                }
+            }, 800);
+
+        } else {
+            message.style.color = "red";
+            message.textContent = result.message || "Invalid login details.";
+        }
+
+    } catch (error) {
+        message.style.color = "red";
+        message.textContent =
+            "Backend connection failed. Please start the Spring Boot server.";
+    }
+});
+
+    </script>
+
+</body>
+</html>

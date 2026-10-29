@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshTrack - Seller Orders</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #247342;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ddd;
+        }
+
+        button {
+            background: #247342;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #18572f;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #247342;
+            color: white;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🌿 FreshTrack - Seller Orders</h1>
+
+    <button onclick="loadOrders()">Refresh Orders</button>
+
+    <p id="message">Loading orders...</p>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+
+            <tbody id="ordersTable"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const API_URL = "http://localhost:8080/api/orders";
+
+    async function loadOrders() {
+        const message = document.getElementById("message");
+        const table = document.getElementById("ordersTable");
+
+        message.textContent = "Loading orders...";
+        table.innerHTML = "";
+
+        try {
+            const response = await fetch(API_URL);
+
+            if (!response.ok) {
+                throw new Error("Could not load orders");
+            }
+
+            const orders = await response.json();
+
+            if (orders.length === 0) {
+                message.textContent = "No orders found.";
+                return;
+            }
+
+            message.textContent = orders.length + " order(s) found.";
+
+            orders.forEach(order => {
+                const row = document.createElement("tr");
+
+                const values = [
+                    order.id,
+                    order.customerName || "-",
+                    order.phone || "-",
+                    order.address || "-",
+                    "₹" + Number(order.totalAmount || 0).toFixed(2),
+                    order.paymentMethod || "COD"
+                ];
+
+                values.forEach(value => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+
+                const statusCell = document.createElement("td");
+                const select = document.createElement("select");
+
+                ["PLACED", "CONFIRMED", "PREPARING", "SHIPPED", "DELIVERED", "CANCELLED"]
+                    .forEach(status => {
+                        const option = document.createElement("option");
+                        option.value = status;
+                        option.textContent = status;
+                        select.appendChild(option);
+                    });
+
+                select.value = order.status || "PLACED";
+                statusCell.appendChild(select);
+                row.appendChild(statusCell);
+
+                const updateCell = document.createElement("td");
+                const updateButton = document.createElement("button");
+
+                updateButton.textContent = "Update";
+
+                updateButton.onclick = async () => {
+                    try {
+                        const updateResponse = await fetch(
+                            API_URL + "/" + order.id +
+                            "/status?status=" + encodeURIComponent(select.value),
+                            { method: "PUT" }
+                        );
+
+                        if (!updateResponse.ok) {
+                            throw new Error("Status update failed");
+                        }
+
+                        alert("Order #" + order.id + " status updated!");
+                        loadOrders();
+
+                    } catch (error) {
+                        alert("Could not update status. Check the backend.");
+                    }
+                };
+
+                updateCell.appendChild(updateButton);
+                row.appendChild(updateCell);
+
+                table.appendChild(row);
+            });
+
+        } catch (error) {
+            message.textContent =
+                "Cannot connect to backend. Please start Spring Boot.";
+        }
+    }
+
+    loadOrders();
+</script>
+
+</body>
+</html>

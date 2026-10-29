@@ -1,47 +1,894 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Food Expiry Management System</title>
-      <link rel="stylesheet" href="style.css">
-   </head>
-   <body>
-   <header>
-    <h1>Food Expiry Management System</h1>
-    <p>Welcome to the Food Expiry Management System. Manage your food products and expiry dates easily.</p>
-   </header>
-   <div class="container">
-    <h2>Add Food Product</h2>
-    <form id="foodForm">
-        <label for="foodName">Food Name:</label>
-        <input type="text" id="foodName" placeholder="Enter food name" required>
-        <label for="expiryDate">Expiry Date:</label>
-        <input type="date" id="expiryDate" required>
-        <label for="price">Price ($)</label>
-        <input type="number" id="price" placeholder="Enter price" min="0.01" step="0.01" required>
-        <button type="submit">Add Product</button>
-    </form>
-    <h2>Food Products</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Food Name</th>
-                    <th>Expiry Date</th>
-                    <th>Price ($)</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="foodList">
-                <!-- Food product rows will be added here dynamically -->
-            </tbody>
-        </table>
-    </div>
-    <p id="message"></p>
-   </div>
-   <script src="script.js"></script>
-   </body>
-</html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>FreshTrack | Smart Food Expiry Management</title>
+
+    <meta name="description"
+          content="FreshTrack helps sellers manage food expiry dates, track inventory, and reduce food waste.">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green: #16803d;
+            --dark-green: #14532d;
+            --light-green: #dcfce7;
+            --background: #f8faf8;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --white: #ffffff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* NAVIGATION */
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 17px 7%;
+            background: var(--white);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 25px;
+        }
+
+        .brand {
+            color: var(--dark-green);
+            font-size: 28px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .brand span {
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--green);
+        }
+
+        .nav-links .nav-button {
+            background: var(--green);
+            color: white;
+            padding: 11px 17px;
+            border-radius: 8px;
+        }
+
+        .nav-links .nav-button:hover {
+            background: var(--dark-green);
+            color: white;
+        }
+
+        /* HERO BANNER CAROUSEL */
+
+        .hero {
+            padding: 65px 7%;
+            background: linear-gradient(120deg, #f0fdf4, #ffffff);
+        }
+
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 45px;
+        }
+
+        .hero-label {
+            display: inline-block;
+            background: var(--light-green);
+            color: var(--dark-green);
+            border-radius: 30px;
+            padding: 8px 15px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 4.5vw, 57px);
+            line-height: 1.15;
+            color: var(--dark-green);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--green);
+        }
+
+        .hero-description {
+            color: var(--muted);
+            font-size: 16px;
+            max-width: 500px;
+            margin-bottom: 27px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 13px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .button-primary {
+            background: var(--green);
+            color: white;
+            border: 1px solid var(--green);
+        }
+
+        .button-primary:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+        }
+
+        .button-outline {
+            background: white;
+            color: var(--dark-green);
+            border: 1px solid #bbf7d0;
+        }
+
+        .button-outline:hover {
+            background: var(--light-green);
+        }
+
+        .banner-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .banner {
+            display: none;
+            position: relative;
+            overflow: hidden;
+            border-radius: 22px;
+            height: 390px;
+            background: #e5e7eb;
+            box-shadow: 0 18px 40px rgba(20, 83, 45, 0.15);
+        }
+
+        .banner.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .banner-caption {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 50px 22px 25px;
+            color: white;
+            background: linear-gradient(
+                transparent,
+                rgba(0, 0, 0, 0.75)
+            );
+        }
+
+        .banner-caption h3 {
+            font-size: 23px;
+            margin-bottom: 5px;
+        }
+
+        .banner-caption p {
+            font-size: 14px;
+        }
+
+        .banner-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: white;
+            color: var(--dark-green);
+            font-size: 23px;
+            cursor: pointer;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2;
+        }
+
+        .banner-arrow:hover {
+            background: var(--light-green);
+        }
+
+        .banner-prev {
+            left: 12px;
+        }
+
+        .banner-next {
+            right: 12px;
+        }
+
+        .banner-dots {
+            display: flex;
+            justify-content: center;
+            gap: 9px;
+            margin-top: 17px;
+        }
+
+        .banner-dot {
+            width: 10px;
+            height: 10px;
+            border: none;
+            border-radius: 50%;
+            background: #bbf7d0;
+            cursor: pointer;
+        }
+
+        .banner-dot.active {
+            width: 27px;
+            border-radius: 10px;
+            background: var(--green);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0.5;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* FEATURES */
+
+        .features {
+            padding: 45px 7% 70px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .section-heading h2 {
+            color: var(--dark-green);
+            font-size: 31px;
+            margin-bottom: 9px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 23px;
+        }
+
+        .feature-card {
+            padding: 29px 23px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            text-align: center;
+            transition: 0.25s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(20, 83, 45, 0.09);
+        }
+
+        .feature-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 17px;
+            background: var(--light-green);
+            border-radius: 18px;
+            font-size: 31px;
+        }
+
+        .feature-card h3 {
+            color: var(--dark-green);
+            font-size: 18px;
+            margin-bottom: 9px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* ABOUT */
+
+        .about {
+            padding: 70px 7%;
+            background: #ecfdf5;
+        }
+
+        .about-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-tag {
+            display: inline-block;
+            background: white;
+            color: var(--green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .about h2 {
+            color: var(--dark-green);
+            font-size: 32px;
+            margin-bottom: 17px;
+        }
+
+        .about p {
+            color: #4b5563;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* CALL TO ACTION */
+
+        .cta {
+            padding: 60px 7%;
+            text-align: center;
+            background: white;
+        }
+
+        .cta h2 {
+            color: var(--dark-green);
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #123d27;
+            color: white;
+            padding: 38px 7% 20px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .footer-brand {
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .footer-brand span {
+            color: #86efac;
+        }
+
+        footer h3 {
+            margin-bottom: 12px;
+            font-size: 17px;
+        }
+
+        footer p,
+        footer a {
+            color: #d1fae5;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            border-top: 1px solid #376449;
+            padding-top: 18px;
+            text-align: center;
+            font-size: 12px;
+            color: #d1fae5;
+        }
+
+        /* RESPONSIVE DESIGN */
+
+        @media (max-width: 900px) {
+            .navbar {
+                padding: 16px 5%;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .hero {
+                padding: 50px 5%;
+            }
+
+            .hero-container {
+                gap: 28px;
+            }
+
+            .banner {
+                height: 320px;
+            }
+
+            .features,
+            .about,
+            .cta {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .nav-links {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px 18px;
+            }
+
+            .nav-links a {
+                font-size: 13px;
+            }
+
+            .nav-links .nav-button {
+                padding: 9px 12px;
+            }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding-top: 40px;
+            }
+
+            .hero h1 {
+                font-size: 39px;
+            }
+
+            .banner {
+                height: 300px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading h2,
+            .about h2,
+            .cta h2 {
+                font-size: 27px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION BAR -->
+
+    <nav class="navbar">
+        <a href="index.html" class="brand">
+            Fresh<span>Track</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="products.html">Products</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="#about">About</a>
+            <a href="login.html" class="nav-button">Login / Register</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+
+    <main>
+        <section class="hero">
+            <div class="hero-container">
+
+                <div class="hero-content">
+                    <span class="hero-label">
+                        🌱 SMART FOOD EXPIRY MANAGEMENT
+                    </span>
+
+                    <h1>
+                        Fresh Food.<br>
+                        Less Waste.<br>
+                        <span>Better Living.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Welcome to FreshTrack! Monitor food expiry dates,
+                        manage inventory efficiently, and make smarter
+                        decisions to reduce food waste.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="products.html" class="button button-primary">
+                            Explore Products →
+                        </a>
+
+                        <a href="login.html" class="button button-outline">
+                            Get Started
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ROTATING BANNERS -->
+
+                <div class="banner-wrapper"
+                     aria-label="FreshTrack food gallery">
+
+                    <div class="banner active">
+                        <img
+                            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=85"
+                            alt="Fresh vegetables arranged in a grocery store"
+                            fetchpriority="high">
+
+                        <div class="banner-caption">
+                            <h3>Freshness You Can Trust</h3>
+                            <p>Keep track of your food inventory.</p>
+                        </div>
+                    </div>
+
+                    <div class="banner">
+                        <img
+                            src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=1000&q=85"
+                            alt="Colorful fresh fruits">
+
+                        <div class="banner-caption">
+                            <h3>Smarter Food Management</h3>
+                            <p>Know your products and expiry dates.</p>
+                        </div>
+                    </div>
+
+                    <div class="banner">
+                        <img
+                            src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1000&q=85"
+                            alt="Fresh and healthy food ingredients">
+
+                        <div class="banner-caption">
+                            <h3>Reduce Food Waste</h3>
+                            <p>Make every product count.</p>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="banner-arrow banner-prev"
+                        aria-label="Previous banner">
+                        &#8249;
+                    </button>
+
+                    <button
+                        type="button"
+                        class="banner-arrow banner-next"
+                        aria-label="Next banner">
+                        &#8250;
+                    </button>
+
+                    <div class="banner-dots" aria-label="Choose a banner">
+                        <button class="banner-dot active"
+                                type="button"
+                                aria-label="Show banner 1"></button>
+
+                        <button class="banner-dot"
+                                type="button"
+                                aria-label="Show banner 2"></button>
+
+                        <button class="banner-dot"
+                                type="button"
+                                aria-label="Show banner 3"></button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+
+        <section class="features">
+            <div class="section-heading">
+                <h2>Why Choose FreshTrack?</h2>
+                <p>Simple tools for smarter food management.</p>
+            </div>
+
+            <div class="feature-grid">
+
+                <article class="feature-card">
+                    <div class="feature-icon">🥬</div>
+                    <h3>Track Expiry Dates</h3>
+                    <p>
+                        Monitor product expiry dates and identify
+                        items that need attention.
+                    </p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>Manage Inventory</h3>
+                    <p>
+                        Organize food products, prices, and expiry
+                        information in one place.
+                    </p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">♻️</div>
+                    <h3>Reduce Food Waste</h3>
+                    <p>
+                        Make informed inventory decisions and help
+                        reduce unnecessary food waste.
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- ABOUT FRESHTRACK -->
+
+        <section class="about" id="about">
+            <div class="about-container">
+
+                <span class="about-tag">ABOUT US</span>
+
+                <h2>About FreshTrack</h2>
+
+                <p>
+                    FreshTrack is a smart food expiry management
+                    platform designed to help sellers manage food
+                    inventory and help customers discover available
+                    food products.
+                </p>
+
+                <p>
+                    By organizing product details, prices, and expiry
+                    dates, FreshTrack aims to make food management
+                    easier, encourage responsible purchasing, and
+                    support the goal of reducing food waste.
+                </p>
+
+                <a href="how-it-works.html"
+                   class="button button-primary">
+                    Discover How It Works →
+                </a>
+
+            </div>
+        </section>
+
+        <!-- CALL TO ACTION -->
+
+        <section class="cta">
+            <h2>Ready to Get Started?</h2>
+
+            <p>
+                Join FreshTrack and explore smarter food management.
+            </p>
+
+            <a href="login.html" class="button button-primary">
+                Login / Register →
+            </a>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="footer-content">
+
+            <div>
+                <div class="footer-brand">
+                    Fresh<span>Track</span>
+                </div>
+
+                <p>
+                    Fresh Food. Less Waste. Better Living.
+                </p>
+            </div>
+
+            <div>
+                <h3>Quick Links</h3>
+
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="products.html">Products</a>
+                    <a href="how-it-works.html">How It Works</a>
+                    <a href="#about">About FreshTrack</a>
+                </div>
+            </div>
+
+            <div>
+                <h3>Account</h3>
+
+                <div class="footer-links">
+                    <a href="login.html">Login</a>
+                    <a href="register.html">Register</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            &copy; <span id="currentYear"></span> FreshTrack.
+            All rights reserved.
+        </div>
+    </footer>
+
+    <!-- BANNER SLIDER -->
+
+    <script>
+        const banners = document.querySelectorAll(".banner");
+        const dots = document.querySelectorAll(".banner-dot");
+
+        const previousButton = document.querySelector(".banner-prev");
+        const nextButton = document.querySelector(".banner-next");
+
+        const bannerWrapper = document.querySelector(".banner-wrapper");
+
+        let currentBanner = 0;
+        let bannerTimer;
+
+        function showBanner(index) {
+            banners[currentBanner].classList.remove("active");
+            dots[currentBanner].classList.remove("active");
+
+            currentBanner = (index + banners.length) % banners.length;
+
+            banners[currentBanner].classList.add("active");
+            dots[currentBanner].classList.add("active");
+        }
+
+        function nextBanner() {
+            showBanner(currentBanner + 1);
+        }
+
+        function previousBanner() {
+            showBanner(currentBanner - 1);
+        }
+
+        function startBannerTimer() {
+            clearInterval(bannerTimer);
+
+            bannerTimer = setInterval(function () {
+                nextBanner();
+            }, 4500);
+        }
+
+        nextButton.addEventListener("click", function () {
+            nextBanner();
+            startBannerTimer();
+        });
+
+        previousButton.addEventListener("click", function () {
+            previousBanner();
+            startBannerTimer();
+        });
+
+        dots.forEach(function (dot, index) {
+            dot.addEventListener("click", function () {
+                showBanner(index);
+                startBannerTimer();
+            });
+        });
+
+        bannerWrapper.addEventListener("mouseenter", function () {
+            clearInterval(bannerTimer);
+        });
+
+        bannerWrapper.addEventListener("mouseleave", startBannerTimer);
+
+        bannerWrapper.addEventListener("focusin", function () {
+            clearInterval(bannerTimer);
+        });
+
+        bannerWrapper.addEventListener("focusout", startBannerTimer);
+
+        startBannerTimer();
+
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+    </script>
+
+</body>
+</html>

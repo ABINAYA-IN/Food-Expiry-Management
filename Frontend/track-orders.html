@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FreshTrack - Track Order</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f8f4;
+            color: #333;
+        }
+
+        header {
+            background: #247342;
+            color: white;
+            padding: 20px;
+        }
+
+        nav {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        nav h2 {
+            margin: 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .tracking-container {
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #ddd;
+        }
+
+        h1 {
+            color: #247342;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .tracking-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 13px 20px;
+            background: #247342;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #18572f;
+        }
+
+        #trackingResult {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f0f8f0;
+            display: none;
+        }
+
+        #trackingResult h3 {
+            color: #247342;
+        }
+
+        .status {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #247342;
+            text-decoration: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 60px;
+            background: #e8eee8;
+        }
+
+        @media (max-width: 600px) {
+            .tracking-container {
+                margin: 25px 15px;
+                padding: 20px;
+            }
+
+            .tracking-form {
+                flex-direction: column;
+            }
+
+            nav {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <nav>
+        <h2>🌿 FreshTrack</h2>
+
+        <div>
+            <a href="index.html">Home</a>
+            <a href="products.html">Products</a>
+            <a href="customer.html">Customer</a>
+            <a href="track-orders.html">Track Orders</a>
+        </div>
+    </nav>
+</header>
+
+<main class="tracking-container">
+
+    <h1>📦 Track Your Order</h1>
+
+    <p class="subtitle">
+        Enter your Order ID to check your latest order status.
+    </p>
+
+    <form class="tracking-form" id="trackingForm">
+        <input
+            type="number"
+            id="trackingOrderId"
+            placeholder="Enter Order ID"
+            min="1"
+            required
+        >
+
+        <button type="submit">Track Order</button>
+    </form>
+
+    <div id="trackingResult" aria-live="polite"></div>
+
+    <a href="customer.html" class="back-link">
+        ← Back to Customer Page
+    </a>
+
+</main>
+
+<footer>
+    © 2026 FreshTrack | Reduce Food Waste 🌱
+</footer>
+
+<script>
+    const API_URL = "http://localhost:8080/api/orders";
+
+    document.getElementById("trackingForm").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const orderId =
+                document.getElementById("trackingOrderId").value;
+
+            const result =
+                document.getElementById("trackingResult");
+
+            result.style.display = "block";
+            result.textContent = "Checking your order...";
+
+            try {
+                const response = await fetch(
+                    API_URL + "/" + encodeURIComponent(orderId)
+                );
+
+                if (response.status === 404) {
+                    result.textContent =
+                        "Order not found. Please check your Order ID.";
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error("Unable to retrieve order");
+                }
+
+                const order = await response.json();
+
+                const statusMessages = {
+                    PLACED: "Your order has been placed successfully!",
+                    CONFIRMED: "Your order has been confirmed.",
+                    PREPARING: "Your order is being prepared.",
+                    SHIPPED: "Your order has been dispatched.",
+                    DELIVERED: "Your order has been delivered!",
+                    CANCELLED: "Your order has been cancelled."
+                };
+
+                result.replaceChildren();
+
+                const heading = document.createElement("h3");
+                heading.textContent = "Order #" + order.id;
+
+                const status = document.createElement("p");
+                status.className = "status";
+                status.textContent = "Status: " + order.status;
+
+                const message = document.createElement("p");
+                message.textContent =
+                    statusMessages[order.status] ||
+                    "Please check your order status.";
+
+                result.append(heading, status, message);
+
+            } catch (error) {
+                result.textContent =
+                    "Unable to connect to the server. Please try again.";
+            }
+        }
+    );
+</script>
+
+</body>
+</html>

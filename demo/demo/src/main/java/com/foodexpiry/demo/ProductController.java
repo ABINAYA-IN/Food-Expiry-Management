@@ -24,7 +24,27 @@ public class ProductController {
         return productRepository.save(product);
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/{id}")
+    public Product updateProduct(
+            @PathVariable Long id,
+            @RequestBody Product updatedProduct) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Product not found: " + id));
+
+        product.setName(updatedProduct.getName());
+        product.setExpiryDate(updatedProduct.getExpiryDate());
+        product.setPrice(updatedProduct.getPrice());
+        product.setImageName(updatedProduct.getImageName());
+
+        // FIX: Save the selected unit
+        product.setUnit(updatedProduct.getUnit());
+
+        return productRepository.save(product);
+    }
+
+    @DeleteMapping("/{id}") 
     public void deleteProduct(@PathVariable Long id) {
         productRepository.deleteById(id);
     }
